@@ -1,7 +1,7 @@
 defmodule Bunyan.Source.ErlangErrorLogger.Report do
 
 
-  alias Bunyan.{ Collector, Shared.Level, Shared.LogMsg }
+  alias Bunyan.Shared.{ Collector, Level, LogMsg }
 
   # SASL special cases
 
@@ -9,53 +9,60 @@ defmodule Bunyan.Source.ErlangErrorLogger.Report do
   def report(level, pid, :progress, info = [
        supervisor: supervisor,
        started: rest
-     ])
+     ],
+     collector)
   do
     msg = "#{rest[:child_type]} #{format_module(rest[:id])} started by #{format_supervisor(supervisor)} as #{inspect rest[:pid]}"
-    log(level, pid, msg, info)
+    log(level, pid, msg, info, collector)
   end
 
-  def report(level, pid, :progress, info = [ application: app, started_at: node ]) do
-    log(level, pid, "Application #{app} started #{format_node(node)}", info)
+  def report(level, pid, :progress, info = [
+        application: app,
+        started_at: node
+      ],
+      collector) do
+    log(level, pid, "Application #{app} started #{format_node(node)}", info, collector)
   end
 
 
   ### Crash report
 
-  def report(level, pid, :crash_report, [info, _])  do
+  def report(level, pid, :crash_report, [info, _], collector)  do
   msg = """
     #{format_initial_call(info[:error_info], info[:initial_call])}
     #{format_error_info(info[:error_info])}
     """
-    log(level, pid, msg, info)
+    log(level, pid, msg, info, collector)
   end
 
 
   ### Supervisor report
-  def report(level, pid, :supervisor_report, info) do
+  def report(level, pid, :supervisor_report, info, collector) do
     msg = """
     #{format_supervisor(info[:supervisor])}: «#{info[:errorContext]}»  #{format_cause(info[:reason])}
     #{format_offender(info[:offender])}
     """
-    log(level, pid, msg, info)
+    log(level, pid, msg, info, collector)
   end
 
 
-  def report(level, pid, type, report) do
+  def report(level, pid, type, report, collector) do
     #IO.inspect report: { level, pid, type, report }
-    log(level, pid, inspect(type), [ wibble: report ])
+    log(level, pid, inspect(type), [ wibble: report ], collector)
   end
 
 
-  defp log(level, pid, msg, extra) do
-    %LogMsg{
+  defp log(level, pid, msg, extra, collector) do
+    msg = %LogMsg{
       level:     Level.of(level),
       msg:       msg,
       extra:     extra,
       timestamp: :os.timestamp(),
       pid:       pid,
       node:      node(pid)
-    } |> Collector.report()
+    }
+
+    Collector.report(collector, msg)
   end
 
 
