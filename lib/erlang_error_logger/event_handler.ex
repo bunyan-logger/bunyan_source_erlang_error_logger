@@ -6,7 +6,6 @@ defmodule Bunyan.Source.ErlangErrorLogger.EventHandler do
   alias Bunyan. Source.ErlangErrorLogger.Report
 
   def init({ args, _term_from_erlang_error_logger }) do
-    IO.inspect init: args
     { :ok, args }
   end
 
@@ -17,8 +16,6 @@ defmodule Bunyan.Source.ErlangErrorLogger.EventHandler do
 
 
   def handle_event(msg, state) do
-    IO.inspect event: {msg, state}
-    IO.inspect event: Process.alive?(state.collector)
     { :ok, error_log(msg, state) }
   end
 

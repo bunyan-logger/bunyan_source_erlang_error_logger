@@ -3,6 +3,7 @@ defmodule Test.ErlangLogger.Options do
   use ExUnit.Case
 
   alias Bunyan.Source.ErlangErrorLogger, as: EEL
+  alias Bunyan.Shared.TestHelpers.DummyCollector
 
   test "collector option is required" do
     assert_raise RuntimeError,
