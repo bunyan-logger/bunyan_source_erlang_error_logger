@@ -1,4 +1,8 @@
-# BunyanSourceErlangErrorLogger
+# Bunyan.Source.ErlangErrorLogger
+
+<!-- bunyan_header -->
+
+## Summary
 
 This is a source plugin for the [Bunyan
 logger](https://github.com/bunyan-logger/bunyan) project.

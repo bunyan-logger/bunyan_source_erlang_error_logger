@@ -20,7 +20,7 @@ defmodule Test.ErlangLogger.Options do
   test "can collect an error" do
     {:ok, pid} = DummyCollector.start_link
     EEL.initialize_source(pid, [])
-    :error_logger.error_msg('boom ~p', [ 99])
+    :error_logger.error_msg('boom ~p', [99])
     # wait for the cast to make it through
     :timer.sleep(10)
 
