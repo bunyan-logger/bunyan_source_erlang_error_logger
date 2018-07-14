@@ -29,6 +29,7 @@ defmodule Bunyan.Source.ErlangErrorLogger.Report do
 
   def report(level, pid, :crash_report, [info, _], collector)  do
   msg = """
+    CRASH RePORT
     #{format_initial_call(info[:error_info], info[:initial_call])}
     #{format_error_info(info[:error_info])}
     """
@@ -39,6 +40,7 @@ defmodule Bunyan.Source.ErlangErrorLogger.Report do
   ### Supervisor report
   def report(level, pid, :supervisor_report, info, collector) do
     msg = """
+    SUPERVISOR REPORT
     #{format_supervisor(info[:supervisor])}: «#{info[:errorContext]}»  #{format_cause(info[:reason])}
     #{format_offender(info[:offender])}
     """
@@ -47,7 +49,7 @@ defmodule Bunyan.Source.ErlangErrorLogger.Report do
 
 
   def report(level, pid, type, report, collector) do
-    #IO.inspect report: { level, pid, type, report }
+    IO.inspect report: { level, pid, type, report }
     log(level, pid, inspect(type), [ wibble: report ], collector)
   end
 

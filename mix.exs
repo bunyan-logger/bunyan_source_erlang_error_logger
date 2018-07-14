@@ -1,21 +1,26 @@
+Code.load_file("shared_build_stuff/mix.exs")
+alias Bunyan.Shared.Build
+
 defmodule BunyanSourceErlangErrorLogger.MixProject do
   use Mix.Project
 
-  def project do
+  def project() do
+    Build.project(
+      :bunyan_source_erlang_error_logger,
+      "0.1.0",
+      &deps/1,
+      "Inject errors and reports from the Erlang error logger into the Bunyan distributed and pluggable logging system"
+    )
+  end
+
+  def application(), do: []
+
+  def deps(a) do
+    IO.inspect a
     [
-      app:     :bunyan_source_erlang_error_logger,
-      version: "0.1.0",
-      elixir:  "~> 1.6",
-      deps:    deps(),
-      start_permanent: Mix.env() == :prod,
+      bunyan:  [ bunyan_shared: ">= 0.0.0" ],
+      others:  [],
     ]
   end
 
-  def application, do: []
-
-  defp deps do
-    [
-      { :bunyan_shared, path: "../bunyan_shared" },
-    ]
-  end
 end

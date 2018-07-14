@@ -3,14 +3,13 @@ defmodule Bunyan.Source.ErlangErrorLogger.EventHandler do
   @behaviour :gen_event
 
   alias Bunyan.Shared.{ Collector, Level, LogMsg }
-  alias Bunyan. Source.ErlangErrorLogger.Report
+  alias Bunyan.Source.ErlangErrorLogger.{ ErrorParser, Report }
 
   def init({ args, _term_from_erlang_error_logger }) do
     { :ok, args }
   end
 
   def init(args) do
-    IO.inspect init: args
     { :ok, args }
   end
 
@@ -21,9 +20,19 @@ defmodule Bunyan.Source.ErlangErrorLogger.EventHandler do
 
   # gl === group_leader
 
+
+
   # Generated when error_msg/1,2 or format is called.
-  def error_log({ :error, gl, { pid, format, data}}, state) do
-    log(:error, gl, pid, format, data, state.collector)
+  def error_log(x = { :error, gl, { pid, format, data}}, state) do
+    # log(:error, gl, pid, format, data, state.collector)
+    IO.inspect x
+
+    case ErrorParser.parse(format, data, pid) do
+    nil ->
+      log(:error, gl, pid, format, data, state.collector)
+    { msg_text, data, pid } ->
+      log_already_formatted(:error, gl, pid, msg_text, data, state.collector)
+    end
     { :ok, state }
   end
 
@@ -70,6 +79,10 @@ defmodule Bunyan.Source.ErlangErrorLogger.EventHandler do
     { :ok, nil, state }
   end
 
+  def log_already_formatted(level, _gl, pid, msg_text, data, collector) do
+    IO.inspect laf: msg_text
+    do_log(level, pid, msg_text, data, collector)
+  end
 
   def log(level, _gl, pid, format, data, collector) when is_list(data) do
     msg_text = :io_lib.format(format, data)
@@ -92,6 +105,7 @@ defmodule Bunyan.Source.ErlangErrorLogger.EventHandler do
 
   # general fall-back handler
   def do_log(level, pid, msg_text, extra, collector) do
+    IO.inspect msg: msg_text
     msg = %LogMsg{
       level:     Level.of(level),
       msg:       msg_text,
@@ -100,6 +114,7 @@ defmodule Bunyan.Source.ErlangErrorLogger.EventHandler do
       pid:       pid,
       node:      node(pid)
     }
+    IO.inspect msg: msg
     Collector.log(collector, msg)
   end
 
