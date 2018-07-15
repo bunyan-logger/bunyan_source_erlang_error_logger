@@ -59,7 +59,7 @@ defmodule Bunyan.Source.ErlangErrorLogger.ErrorParser do
   end
 
 
-  def parse_stanza("", data, result) do
+  def parse_stanza("", data, _result) do
     IO.inspect trailing_data: data
     :erlang.halt
   end
