@@ -9,7 +9,7 @@ defmodule BunyanSourceErlangErrorLogger.MixProject do
   def project() do
     Build.project(
       :bunyan_source_erlang_error_logger,
-      "0.1.0",
+      "0.5.0",
       &deps/1,
       "Inject errors and reports from the Erlang error logger into the Bunyan distributed and pluggable logging system"
     )
