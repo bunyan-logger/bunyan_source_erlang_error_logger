@@ -23,3 +23,5 @@ erl_crash.dump
 bunyan_source_erlang_error_logger-*.tar
 
 /.elixir_ls/
+
+mix.lock
