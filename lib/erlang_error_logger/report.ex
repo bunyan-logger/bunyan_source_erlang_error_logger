@@ -127,7 +127,7 @@ defmodule Bunyan.Source.ErlangErrorLogger.Report do
   defp format_module("Elixir." <> module), do: module
   defp format_module(module),              do: ":#{module}"
 
-  defp format_node(:"nonode@nohost"), do: "locally"
-  defp format_node(node),             do: "on node #{node}"
+  defp format_node(:nonode@nohost), do: "locally"
+  defp format_node(node),           do: "on node #{node}"
 
 end
